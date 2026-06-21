@@ -82,7 +82,8 @@ MySQL 保存账号、权限、项目、元数据、漏斗配置、标签、分�
 - Docker Desktop 或兼容的 Docker Compose 环境。
 - Java 8 兼容源码环境；本地可使用较新 JDK 运行 Maven。
 - Maven 3。
-- Node.js 与 Yarn 1.x。前端统一使用 Yarn，不使用 npm lockfile。
+- Mac 本地开发使用 Node.js 与 Yarn 1.x。
+- GitHub Actions 使用 Node 16、npm 和提交到仓库的 `ui/package-lock.json`。
 
 ### 1. 启动依赖
 
@@ -237,14 +238,15 @@ docker exec clklog-local-redis redis-cli ping
 ESLint，并确认开发构建成功。
 
 根目录 `.github/workflows/ci.yml` 会分别编译 `api`、`manage`、`init`、
-`receiver`、`processing`，并使用 Yarn 构建 `ui`。模块目录中的工作流不会
-单独运行或保存发布凭据。
+`receiver`、`processing`，并使用 Node 16 + `npm ci` 构建 `ui`。Node 18
+与旧依赖 `@achrinza/node-ipc@9.2.2` 的 engine 范围不兼容。Mac 本地开发
+仍统一使用 Yarn。模块目录中的工作流不会单独运行或保存发布凭据。
 
 ## 开发约定
 
 - 分支按变更类型使用 `feature/`、`fix/`、`chore/`、`docs/`、
   `refactor/` 或 `test/`，不使用工具或助手专属前缀。
-- 前端命令统一使用 Yarn。
+- Mac 本地前端命令统一使用 Yarn；CI 允许使用 npm。
 - Java 源码保持 Java 8 兼容。
 - 不提交 `.DS_Store`、构建产物、日志、IDE 文件和本地数据卷。
 - 所有模块共享当前仓库的分支、索引和提交，避免在模块目录重新初始化 Git。

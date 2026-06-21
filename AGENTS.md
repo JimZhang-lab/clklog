@@ -23,7 +23,8 @@ history.
 - Use conventional branch prefixes based on the change type:
   `feature/`, `fix/`, `chore/`, `docs/`, `refactor/`, or `test/`.
 - Do not use tool- or assistant-specific branch prefixes.
-- Use Yarn for every frontend command. Do not add npm-generated lockfiles.
+- Use Yarn for frontend development on the local Mac.
+- GitHub Actions may use `npm ci` with the committed `ui/package-lock.json`.
 - Keep Java source compatible with Java 8.
 - Follow existing Spring, JPA, Vue 2, Element UI, and ECharts conventions.
 - Prefer focused changes and do not reformat unrelated legacy files.
@@ -141,8 +142,10 @@ Manage, MySQL, API, and ClickHouse. For API keys, exercise create, edit, list,
 and delete. For custom SQL, verify both a successful read query and a rejected
 write statement.
 
-Root CI is defined in `.github/workflows/ci.yml`. Keep module build commands
-there instead of adding nested `.github/workflows` directories.
+Root CI is defined in `.github/workflows/ci.yml`. It uses Node 16 and npm for
+the frontend because the legacy dependency tree is not compatible with Node
+18. Keep module build commands there instead of adding nested
+`.github/workflows` directories.
 
 ## Documentation
 

@@ -14,7 +14,8 @@ Before editing:
 
 Implementation checklist:
 
-- Use Yarn for Vue 2 frontend work.
+- Use Yarn for Vue 2 development on the local Mac.
+- Preserve `ui/package-lock.json` for the npm-based GitHub Actions build.
 - Keep Java source compatible with Java 8.
 - Store identity and configuration data in MySQL.
 - Store event and aggregate analytics in ClickHouse.
