@@ -1,0 +1,18 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    clickhouse:
+      jdbc-url: jdbc:clickhouse://127.0.0.1:18123/clklog
+      username: default
+      password: 123456
+      driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
+      connection-timeout: 20000
+      socket-timeout: 60000
+      maximum-pool-size: 5
+  redis:
+    host: 127.0.0.1
+    port: 16379
+    database: 0
+    password:

@@ -1,0 +1,57 @@
+name: Monorepo CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - "feature/**"
+      - "fix/**"
+      - "chore/**"
+  pull_request:
+
+jobs:
+  java:
+    name: Java compile (${{ matrix.module }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        module:
+          - api
+          - manage
+          - init
+          - receiver
+          - processing
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "8"
+          cache: maven
+          cache-dependency-path: "${{ matrix.module }}/pom.xml"
+      - name: Compile
+        working-directory: "${{ matrix.module }}"
+        run: mvn -B -q -DskipTests compile
+
+  frontend:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+      - name: Enable Yarn
+        run: corepack prepare yarn@1.22.22 --activate
+      - name: Install dependencies
+        working-directory: ui
+        run: yarn install --non-interactive
+      - name: Build
+        working-directory: ui
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+        run: yarn build

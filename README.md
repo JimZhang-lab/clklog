@@ -1,155 +1,260 @@
-<p align="center"><img src="https://clklog.com/assets/imgs/logo1.png" height="60"/> </p>
-<p align="center">开源 + 私有化部署的埋点用户行为分析系统  </p> <p align="center"> 支持多平台埋点采集、主流分析模型及国产化/信创环境适配 </p>
-<p align="center"><a href="https://clklog.com/" target="_blank">官网</a> | <a href="https://clklog.com/product/intro.html" target="_blank">产品介绍</a> | <a href="https://clklog.com/install/intro.html" target="_blank"> 技术指南</a>
-</p>
+# ClkLog
 
-## ✨ ClkLog是什么
+ClkLog 是一套可私有化部署的用户行为分析系统。本仓库采用单仓库目录结构，
+统一管理前端、管理服务、分析服务、采集和处理模块，并补齐了专业版与企业版
+常用的分析、用户画像、权限和运维能力。
 
-ClkLog是一款轻量级埋点用户行为分析平台，支持私有化部署与源码交付，帮助企业快速构建完整、私有的用户行为分析体系。产品提供事件分析、漏斗分析、留存分析、路径分析、用户画像、用户分群等能力，支持 Web、App、小程序等多平台数据采集。
+## 已实现能力
 
-ClkLog采用开源 + 商业版本的模式，所有版本都支持完整源码交付，目前包含社区版（AGPL-3.0 协议）以及商业授权的专业版、企业版和信创版本，并持续推进国产化与信创环境适配。
+- 数据概览、实时访问、数据汇总、趋势分析和移动端汇总。
+- 新老访客、地域、来源、渠道、设备、受访页面、入口页和退出页分析。
+- 活跃、忠诚度、留存/流失、回流/沉默用户分析。
+- 元事件、事件属性、用户属性、日志查询、数据统计和自定义分析。
+- 漏斗配置、UV/PV 计算、转化周期、多步骤分析、趋势和明细。
+- 标签分类、用户标签、标签赋值、用户分群、用户画像和用户细查。
+- 我的书签、项目配置、全局设置、系统日志汇总。
+- 账号、角色、菜单和接口权限管理。
+- API 密钥生命周期管理，完整密钥只在创建成功时返回一次。
+- 本地只读 ClickHouse SQL 查询，限制单语句、写操作和最大返回行数。
 
-目前ClkLog已应用于汽车、电力、金融、保险、房产、物流等多个行业场景，帮助企业开展用户行为分析与数字化运营工作。
+商业版页面与本地路由的详细对照见
+[docs/commercial-feature-parity.md](docs/commercial-feature-parity.md)。
 
-## 🚀 核心优势
+## 仓库结构
 
-### 1. 私有化部署，数据自主可控
+所有业务模块都是当前仓库直接跟踪的普通目录：
 
-企业无需将数据上传第三方平台,支持本地部署、内网部署、混合部署、安全隔离环境, 企业自主可控，满足数据安全合规要求。
+| 目录 | 作用 | 主要数据源 |
+| --- | --- | --- |
+| `ui` | Vue 2 + Element UI 前端 | Manage API、Analytics API |
+| `manage` | 登录、权限、项目、元数据、标签、分群、密钥 | MySQL、Redis |
+| `api` | 访问、事件、漏斗、用户和自定义 SQL 分析 | ClickHouse、Redis |
+| `init` | MySQL/ClickHouse 初始化与升级脚本 | MySQL、ClickHouse |
+| `receiver` | 埋点事件接收 | Kafka |
+| `processing` | Flink 清洗与处理任务 | Kafka、ClickHouse |
+| `deploy/local` | 本地联调种子数据和初始化脚本 | Docker Compose |
 
-### 2. 多平台埋点采集
+首次拉取只需要克隆当前仓库：
 
-支持多端（Web/H5/App/小程序/鸿蒙）埋点数据采集，涵盖自定义事件、用户标识关联,实现统一用户行为数据体系。
-
-### 3. 主流分析模型开箱即用
-
-内置访问分析、事件分析、漏斗分析、用户画像、标签体系、分群分析，无需自行开发分析引擎，可快速建立数据分析能力。
-
-### 4. 国产化 / 信创环境适配
-
-支持企业信创建设场景。适配国产 CPU、国产服务器、国产操作系统、国产数据库，适用于有信创需求的企业单位。
-
-<!-- ## 🔥 核心功能
-
-基础访问分析：多维度掌握用户访问情况，快速洞察流量结构与用户行为。
-多维事件分析：围绕关键业务行为，灵活配置事件埋点，分析用户行为轨迹。
-用户画像分析：沉淀用户特征数据，支持标签、分群与用户行为细查，辅助私域运营。 -->
-
-## 📦版本体系
-
-ClkLog 提供多版本能力体系，满足不同企业阶段需求。
-
-| 版本         | 定位                           |
-| ------------ | ------------------------------ |
-| 🟢 开源社区版 | 适合开发者 / 学习 / 小团队     |
-| 🔵 PRO专业版  | 适合用户访问行为分析与运营场景 |
-| 🟣 CDP企业版  | 适合用户画像与精细化运营场景   |
-| 🟡 信创版     | 适合政企信创国产私有化场景     |
-
-### 🧩 版本能力对比
-
-| 能力       | 社区版 | 专业版 | 企业版 | 信创版 |
-| ---------- | ------ | ------ | ------ | ------ |
-| 数据采集   | ✅      | ✅      | ✅      | ✅      |
-| 事件分析   | 基础   | 完整   | 完整   | 完整   |
-| 用户画像   | 基础   | 基础   | 完整   | 完整   |
-| 漏斗分析   | ❌      | ✅      | ✅      | ✅      |
-| 用户细查   | ❌      | ❌      | ✅      | ✅      |
-| 标签体系   | ❌      | ❌      | ✅      | ✅      |
-| 信创适配   | ❌      | ❌      | ❌      | ✅      |
-| 私有化部署 | ✅      | ✅      | ✅      | ✅      |
-
-## 🏗 系统架构
-
-ClkLog 采用分层式架构设计。
-
-```text
-SDK/埋点采集（Web/App/小程序）
-        │
-        ▼
-Receiver（数据接收）
-        │
-        ▼
-Kafka（消息缓冲）
-        │
-        ▼
-Processing（数据处理）
-        │
-        ▼
-ClickHouse / Doris（数据存储）
-        │
-        ▼
-API + 管理后台
-        │
-        ▼
-统计分析与可视化
- 
+```bash
+git clone https://github.com/JimZhang-lab/clklog.git
+cd clklog
 ```
 
-## 🧰 技术栈
+后续更新直接在仓库根目录执行：
 
-ClkLog 采用主流企业级技术架构，支持高并发与可扩展分析能力。
+```bash
+git pull --rebase
+```
 
-后端：Java / Redis / Kafka / Zookeeper
+`ui`、`api`、`manage`、`init`、`receiver` 和 `processing` 不再是独立 Git
+仓库，不需要也不应在这些目录中单独执行拉取、切分支或提交操作。
 
-前端：Vue / ElementUI / ECharts
+## 数据链路
 
-数据库：ClickHouse / Apache Doris、MySQL / OpenGauss / OceanBase
+```text
+Web / App / 小程序 SDK
+          |
+          v
+       Receiver
+          |
+          v
+        Kafka
+          |
+          v
+   Processing / Flink
+          |
+          v
+      ClickHouse <------ Analytics API
+                              |
+                              v
+MySQL <------ Manage API <--- UI ---> Redis
+```
 
-## 系统示意图
+MySQL 保存账号、权限、项目、元数据、漏斗配置、标签、分群、书签和 API
+密钥。ClickHouse 保存原始事件及分析聚合数据。任何用户或元数据操作都必须携带
+`projectName`。
 
-|     ![](https://clklog.com/assets/imgs/preview/com/1.png) 社区版-数据概览     |      ![](https://clklog.com/assets/imgs/preview/com/2.png) 社区版-趋势分析      |      ![](https://clklog.com/assets/imgs/preview/com/3.png)  社区版- 地域分析      |
-| :---------------------------------------------------------------------------: | :-----------------------------------------------------------------------------: | :-------------------------------------------------------------------------------: |
-| ![](https://clklog.com/assets/imgs/preview/pro/10.png) **PRO专业版-留存分析** | ![](https://clklog.com/assets/imgs/preview/pro/13.png) **PRO专业版-自定义分析** |   ![](https://clklog.com/assets/imgs/preview/pro/14.png) **PRO专业版-漏斗分析**   |
-| ![](https://clklog.com/assets/imgs/preview/cdp/2.png) **CDP企业版-用户标签**  | ![](https://clklog.com/assets/imgs/preview/cdp/8.png) **CDP企业版-用户群画像**  | ![](https://clklog.com/assets/imgs/preview/cdp/14.png) **CDP企业版-用户行为细查** |
+## 本地运行
 
-## 社区支持
+### 环境要求
 
-欢迎：⭐ Star 🐞 Issue 🔧 PR 💬 交流建议
-________________________________________
+- Docker Desktop 或兼容的 Docker Compose 环境。
+- Java 8 兼容源码环境；本地可使用较新 JDK 运行 Maven。
+- Maven 3。
+- Node.js 与 Yarn 1.x。前端统一使用 Yarn，不使用 npm lockfile。
+
+### 1. 启动依赖
+
+```bash
+docker compose -f compose.dependencies.yml up -d
+docker compose -f compose.dependencies.yml ps
+```
+
+Compose 会启动并初始化：
+
+| 服务 | 本地地址 |
+| --- | --- |
+| MySQL | `127.0.0.1:13306` |
+| ClickHouse HTTP | `127.0.0.1:18123` |
+| ClickHouse Native | `127.0.0.1:19000` |
+| Redis | `127.0.0.1:16379` |
+
+首次启动会执行：
+
+- `init/scripts_init/mysql/mysql_clklog.sql`
+- `deploy/local/mysql/seed.sql`
+- `init/scripts/init.sql`
+- `deploy/local/clickhouse/seed.sql`
+
+重新创建本地数据：
+
+```bash
+docker compose -f compose.dependencies.yml down -v
+docker compose -f compose.dependencies.yml up -d
+```
+
+`down -v` 会删除本地容器数据，不要在生产环境执行。
+
+### 2. 启动 Manage
+
+```bash
+cd manage
+mvn spring-boot:run -Dspring-boot.run.profiles=local
+```
+
+地址：`http://127.0.0.1:8080`
+
+### 3. 启动 Analytics API
+
+```bash
+cd api
+mvn spring-boot:run -Dspring-boot.run.profiles=local
+```
+
+地址：`http://127.0.0.1:8081`
+
+### 4. 启动前端
+
+```bash
+cd ui
+yarn install
+NODE_OPTIONS=--openssl-legacy-provider yarn dev --host 127.0.0.1
+```
+
+访问：`http://127.0.0.1:9527`
+
+本地体验账号：
+
+```text
+username: clklog
+password: clklog
+```
+
+前端开发代理默认连接 `8080` 和 `8081`。需要覆盖时可设置
+`CLKLOG_MANAGE_TARGET` 和 `CLKLOG_API_TARGET`。
+
+## 重点入口
+
+| 功能 | 本地路由 |
+| --- | --- |
+| 数据汇总 | `/#/record/summary` |
+| 移动端汇总 | `/#/mobileSummary/index` |
+| 漏斗分析 | `/#/mete/funnelAnalysis` |
+| 用户细查 | `/#/ups/userReview` |
+| 标签分类 | `/#/ups/tagCategory` |
+| 用户标签 | `/#/ups/userTag` |
+| 用户分群 | `/#/ups/userGroup` |
+| 自定义 SQL | `/#/tabix/query` |
+| API 密钥 | `/#/apiKey/manage` |
+
+移动端汇总是独立页面，不加载桌面侧栏，可直接在手机浏览器访问。
+
+## 新增接口约束
+
+### API 密钥
+
+Manage API：
+
+```text
+POST /apikey/list
+POST /apikey/get
+POST /apikey/add
+POST /apikey/edit
+POST /apikey/delete
+```
+
+所有请求必须携带 `projectName`。数据库只保存密钥前缀、脱敏值和 SHA-256
+摘要；完整密钥只在 `/apikey/add` 成功响应中出现一次。
+
+### 自定义 SQL
+
+Analytics API：
+
+```text
+POST /customsql/query
+```
+
+请求必须携带 `projectName`、`sql` 和可选的 `pageSize`。服务端仅允许
+`SELECT`、`SHOW`、`DESCRIBE`、`DESC`、`EXPLAIN`，拒绝多语句和数据写入，
+并将返回行数限制在 1 到 1000。
+
+## 数据库升级
+
+已有本地或部署环境需要执行升级脚本：
+
+```bash
+docker exec -i clklog-local-mysql \
+  mysql --default-character-set=utf8mb4 -uroot -p123456 clklog \
+  < init/scripts_init/mysql/upgrade_analytics_features.sql
+```
+
+升级脚本包含漏斗、标签、书签、CDP、角色、菜单和 API 密钥等表结构。新增
+数据库变更时，必须同时更新 fresh-install SQL 与 upgrade SQL。
+
+## 轻量验证
+
+```bash
+cd manage && mvn -q -DskipTests compile
+cd api && mvn -q -DskipTests compile
+cd ui && yarn eslint \
+  src/views/commercial/CustomSqlQuery.vue \
+  src/views/commercial/MobileSummary.vue \
+  src/views/sys-manage/api-key.vue
+```
+
+健康检查：
+
+```bash
+curl http://127.0.0.1:8080/actuator/health
+curl http://127.0.0.1:8081/actuator/health
+curl http://127.0.0.1:18123/ping
+docker exec clklog-local-mysql mysqladmin ping -uroot -p123456
+docker exec clklog-local-redis redis-cli ping
+```
+
+前端全仓库仍有历史 ESLint 基线问题，迭代时优先对本次改动文件执行定向
+ESLint，并确认开发构建成功。
+
+根目录 `.github/workflows/ci.yml` 会分别编译 `api`、`manage`、`init`、
+`receiver`、`processing`，并使用 Yarn 构建 `ui`。模块目录中的工作流不会
+单独运行或保存发布凭据。
+
+## 开发约定
+
+- 分支按变更类型使用 `feature/`、`fix/`、`chore/`、`docs/`、
+  `refactor/` 或 `test/`，不使用工具或助手专属前缀。
+- 前端命令统一使用 Yarn。
+- Java 源码保持 Java 8 兼容。
+- 不提交 `.DS_Store`、构建产物、日志、IDE 文件和本地数据卷。
+- 所有模块共享当前仓库的分支、索引和提交，避免在模块目录重新初始化 Git。
+- 涉及用户、事件、漏斗、标签、分群或元数据的请求必须按项目隔离。
+- 跨服务修改至少验证一次 UI、Manage、MySQL、API 与 ClickHouse 数据链路。
+
+完整协作规则见 [AGENTS.md](AGENTS.md)，其他编码助手同时遵循
+[CLAUDE.md](CLAUDE.md)。
 
 ## License
 
-### 开源协议：AGPL V3.0
-
-• 使用 Clklog 的组织或个人在复制、分发、转发或修改时请遵守AGPL V3.0相关条款，不得移除ClkLog相关版权标识。任何分发或通过网络提供服务的版本（包括衍生版本）必须开源，并保留原版权和协议信息。如有违反，ClkLog将保留对侵权者追究责任的权利。
-
-#### 免费使用
-
-• 适用范围：个人开发者、学术研究及非商业项目可免费使用
-
-• 商业限制：若将ClkLog集成到闭源商业产品中，任何修改、二开、集成须遵循 AGPLv3.0 协议开源衍生产品
-
-• 授权方式：遵循 AGPLv3.0 协议
-
-#### 商业使用
-
-• 适用范围：商业项目集成可闭源使用
-
-• 授权方式：需购买商业授权
-
-### 特别提醒
-
-在AGPL V3.0协议中，“衍生产品”是指：在 ClkLog 源代码基础上进行任何修改、扩展、适配、重构，或与其他软件、系统组合后形成的作品，包括但不限于：
-
-• 修改、删除或新增源代码的版本；
-
-• 增加功能模块、插件或集成接口的版本；
-
-• 将 ClkLog 嵌入或整合进其他产品、系统或服务的版本；
-
-• 改变数据结构、接口协议或运行架构的版本。
-
-无论改动大小，只要衍生产品包含 ClkLog 的代码或核心逻辑，即视为衍生产品，并适用本协议的相关条款。
-
-## 商业支持与合作
-
-如需了解完整产品能力、信创方案或商业版本合作方式，欢迎通过以下方式联系我们获取详细资料：
-
-- 联系电话：&nbsp;&nbsp; 16621363853
-
-- 客服微信：&nbsp;&nbsp; opensoft66
-
-- 微信客服: &nbsp;&nbsp;&nbsp;&nbsp; <img title="" src="https://clklog.com/assets/imgs/qrcode_contact.png" alt="" data-align="center" width="120" style="vertical-align:top">
-
-- 微信公众号:&nbsp;&nbsp;<img title="" src="https://clklog.com/assets/imgs/contactqrcode.jpg" alt="" data-align="center" width="120" style="vertical-align:top">
+社区版遵循 AGPL-3.0。闭源商业集成、商业授权和商标使用请以 ClkLog
+官方授权条款为准。

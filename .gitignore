@@ -1,0 +1,41 @@
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor swap files
+*.swp
+*.swo
+*~
+
+# IDE and editor settings
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Java build output
+**/target/
+**/.gradle/
+**/build/
+
+# Frontend dependencies and output
+**/node_modules/
+**/dist/
+**/coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Runtime logs and local data
+*.log
+**/log/
+**/logs/
+data/
+volumes/
+
+# Local environment files
+.env.local
+.env.*.local

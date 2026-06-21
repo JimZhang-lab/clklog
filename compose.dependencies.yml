@@ -1,0 +1,74 @@
+name: clklog-local
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: clklog-local-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_DATABASE: clklog
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+    ports:
+      - "13306:3306"
+    volumes:
+      - clklog_mysql_data:/var/lib/mysql
+      - ./init/scripts_init/mysql/mysql_clklog.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./deploy/local/mysql/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p123456 --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8
+    container_name: clklog-local-clickhouse
+    restart: unless-stopped
+    environment:
+      CLICKHOUSE_DB: clklog
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: "123456"
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+      TZ: Asia/Shanghai
+    ports:
+      - "18123:8123"
+      - "19000:9000"
+    volumes:
+      - clklog_clickhouse_data:/var/lib/clickhouse
+      - ./init/scripts/init.sql:/bootstrap/init.sql:ro
+      - ./deploy/local/clickhouse/init-db.sh:/docker-entrypoint-initdb.d/01-init-db.sh:ro
+      - ./deploy/local/clickhouse/seed.sql:/bootstrap/seed.sql:ro
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "clickhouse-client --user default --password 123456 --query 'SELECT 1'",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: clklog-local-redis
+    restart: unless-stopped
+    ports:
+      - "16379:6379"
+    volumes:
+      - clklog_redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  clklog_mysql_data:
+  clklog_clickhouse_data:
+  clklog_redis_data:
