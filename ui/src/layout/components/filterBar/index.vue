@@ -351,14 +351,16 @@ export default {
           });
           break;
         }
-        case "/userBehavior/userLoyalty": {
+        case "/userBehavior/userLoyalty":
+        case "/userbehavior/loyaltyAnalysis": {
           exportVisitorApi(this.commonData).then((res) => {
             let name = this.sliceTypeFile(res);
             blobDownloads(res.data, name);
           });
           break;
         }
-        case "/userBehavior/portrait": {
+        case "/userBehavior/portrait":
+        case "/userbehavior/userBehavior": {
           let cols = [
             "distinctId",
             "visitorType",

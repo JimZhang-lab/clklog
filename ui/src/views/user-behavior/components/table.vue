@@ -176,6 +176,11 @@
                 </div>
               </template>
             </el-table-column>
+            <el-table-column label="访问详情" width="100">
+              <template slot-scope="scope">
+                <el-button type="text" @click="handleCellClick(scope.row.distinctId)">查看</el-button>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
       </div>

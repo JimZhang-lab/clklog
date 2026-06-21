@@ -162,6 +162,12 @@ password: clklog
 | 数据汇总 | `/#/record/summary` |
 | 移动端汇总 | `/#/mobileSummary/index` |
 | 漏斗分析 | `/#/mete/funnelAnalysis` |
+| App 崩溃分析 | `/#/crashAnalysis/crash` |
+| 用户画像 | `/#/userbehavior/userBehavior` |
+| 活跃用户分析 | `/#/userbehavior/activeUsers` |
+| 忠诚度分析 | `/#/userbehavior/loyaltyAnalysis` |
+| 流失/留存用户 | `/#/userbehavior/retainedUsers` |
+| 回流/沉默用户 | `/#/userbehavior/silentUsers` |
 | 用户细查 | `/#/ups/userReview` |
 | 标签分类 | `/#/ups/tagCategory` |
 | 用户标签 | `/#/ups/userTag` |

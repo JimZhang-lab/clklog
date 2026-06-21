@@ -2,30 +2,115 @@
   <div v-loading="loadingRefresh" class="userLoyalty public-hoverItem">
     <!-- 测试台湾地图展示内容-->
     <!-- <div ref="map" id="chartOne" style="width: 800px; height: 600px"></div> -->
-    <el-tabs @tab-click="handleClick" v-model="activeTab">
-      <el-tab-pane label="崩溃日志" name="崩溃日志">
+    <el-tabs v-model="activeTab" @tab-click="handleClick">
+      <el-tab-pane label="数据汇总" name="数据汇总">
         <div class="tab-warry block-main" style="padding-top: 0">
           <div class="tab-sing">
             <el-input
+              v-model="version"
               class="custom_input"
               placeholder="请输入应用版本"
-              v-model="version"
               style="width: 200px; border-radius: 4px"
+              clearable
               @keyup.enter.native="searchEvent()"
               @clear="handleClear"
-              clearable
             >
               <i
-                @click="searchEvent"
                 slot="prefix"
                 class="el-input__icon el-icon-search"
-              ></i>
+                @click="searchEvent"
+              />
             </el-input>
             <div class="warry_select">
               <div class="title">操作系统:</div>
               <el-select
-                style="width: 100px"
                 v-model="channelValue"
+                style="width: 100px"
+                class="single_select"
+                placeholder=""
+                @change="changSystemEvent('数据汇总')"
+              >
+                <el-option
+                  v-for="item in allChaneList"
+                  :key="item.id"
+                  :label="item.label"
+                  :value="item.id"
+                />
+              </el-select>
+            </div>
+          </div>
+          <div class="table-block">
+            <el-table
+              :header-cell-style="{
+                textAlign: 'center',
+                background: '#f7fafe ',
+              }"
+              :cell-style="{ textAlign: 'center' }"
+              class="public-radius"
+              border
+              :data="dataSumList"
+              style="width: 100%"
+              @row-click="handleRowClick"
+            >
+              <el-table-column
+                label="序号"
+                type="index"
+                width="80"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  <span v-text="scope.$index + 1" />
+                </template>
+              </el-table-column>
+              <el-table-column prop="appVersion" label="应用版本" />
+              <el-table-column prop="channel" label="操作系统" />
+              <el-table-column prop="modelCount" label="设备型号数" />
+              <el-table-column prop="visitCount" label="访问次数" />
+              <el-table-column prop="crashedCount" label="崩溃次数" />
+              <el-table-column prop="pvRate" label="崩溃率">
+                <template slot-scope="{ row }">
+                  {{ row.pvRate | percentage }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="uv" label="访问用户数" />
+              <el-table-column prop="crashedUv" label="崩溃触发用户数" />
+              <el-table-column prop="uvRate" label="崩溃触发用户占比">
+                <template slot-scope="{ row }">
+                  {{ row.uvRate | percentage }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="crashedCountRate" label="崩溃数占比">
+                <template slot-scope="{ row }">
+                  {{ getCrashCountRate(row) | percentage }}
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="崩溃日志" name="崩溃日志">
+        <div class="tab-warry block-main" style="padding-top: 0">
+          <div class="tab-sing">
+            <el-input
+              v-model="version"
+              class="custom_input"
+              placeholder="请输入应用版本"
+              style="width: 200px; border-radius: 4px"
+              clearable
+              @keyup.enter.native="searchEvent()"
+              @clear="handleClear"
+            >
+              <i
+                slot="prefix"
+                class="el-input__icon el-icon-search"
+                @click="searchEvent"
+              />
+            </el-input>
+            <div class="warry_select">
+              <div class="title">操作系统:</div>
+              <el-select
+                v-model="channelValue"
+                style="width: 100px"
                 class="single_select"
                 placeholder=""
                 @change="changSystemEvent('崩溃日志')"
@@ -35,8 +120,7 @@
                   :key="item.id"
                   :label="item.label"
                   :value="item.id"
-                >
-                </el-option>
+                />
               </el-select>
             </div>
           </div>
@@ -59,24 +143,20 @@
                 align="center"
               >
                 <template slot-scope="scope">
-                  <span v-text="getIndex(scope.$index)"> </span>
+                  <span v-text="getIndex(scope.$index)" />
                 </template>
               </el-table-column>
-              <el-table-column prop="logTime" label="崩溃时间" width="200">
-              </el-table-column>
-              <el-table-column prop="appVersion" label="应用版本">
-              </el-table-column>
-              <el-table-column prop="os" label="操作系统"> </el-table-column>
-              <el-table-column prop="osVersion" label="操作系统版本">
-              </el-table-column>
+              <el-table-column prop="logTime" label="崩溃时间" width="200" />
+              <el-table-column prop="appVersion" label="应用版本" />
+              <el-table-column prop="os" label="操作系统" />
+              <el-table-column prop="osVersion" label="操作系统版本" />
 
               <el-table-column
                 prop="model"
                 label="设备型号"
                 :show-overflow-tooltip="true"
                 min-width="200"
-              >
-              </el-table-column>
+              />
               <el-table-column
                 prop="appCrashedReason"
                 width="250"
@@ -109,7 +189,7 @@
                       v-if="row.appCrashedReason"
                       class="el-icon-view"
                       style="color: #2c7be5; cursor: pointer"
-                    ></i>
+                    />
                   </div>
                 </template>
               </el-table-column>
@@ -169,240 +249,202 @@
         </div>
       </el-tab-pane>
     </el-tabs>
-    <dialogCollapase ref="dialogCollapase"></dialogCollapase>
-    <collapseDetail ref="collapseDetail"></collapseDetail>
+    <dialogCollapase ref="dialogCollapase" />
+    <collapseDetail ref="collapseDetail" />
   </div>
 </template>
 
 <script>
-import echarts from "echarts";
-import taiwan from "echarts/map/json/province/taiwan.json";
-import { copyObj } from "@/utils/copy";
-import { getPageApi } from "@/api/trackingapi/collapse";
-import dialogCollapase from "./dialog";
-import collapseDetail from "./collapseDetail-dialog.vue";
+import { copyObj } from '@/utils/copy'
+import {
+  getPageApi,
+  groupedSummaryApi
+} from '@/api/trackingapi/collapse'
+import dialogCollapase from './dialog'
+import collapseDetail from './collapseDetail-dialog.vue'
 export default {
   components: {
     dialogCollapase,
-    collapseDetail,
+    collapseDetail
   },
   data() {
     return {
       loadingRefresh: false,
       pickerBeginOption: {
         disabledDate(date) {
-          const today = new Date();
-          return date.getTime() > today.getTime();
+          const today = new Date()
+          return date.getTime() > today.getTime()
         },
         shortcuts: [
           {
-            text: "近一周",
+            text: '近一周',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
-            },
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
           },
           {
-            text: "近一个月",
+            text: '近一个月',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
-            },
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
           },
           {
-            text: "近三个月",
+            text: '近三个月',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
-            },
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
           },
           {
-            text: "近六个月",
+            text: '近六个月',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 180);
-              picker.$emit("pick", [start, end]);
-            },
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 180)
+              picker.$emit('pick', [start, end])
+            }
           },
           {
-            text: "近一年",
+            text: '近一年',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 365);
-              picker.$emit("pick", [start, end]);
-            },
-          },
-        ],
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 365)
+              picker.$emit('pick', [start, end])
+            }
+          }
+        ]
       },
       commonParams: {},
-      activeTab: "崩溃日志",
-      version: "",
-      channelValue: "",
+      activeTab: '数据汇总',
+      version: '',
+      channelValue: '',
       optionList: [],
       pageNum: 1,
       pageSize: 10,
-      selectVal: "",
+      selectVal: '',
       total: 0,
       currentTime: [],
       dataSumList: [],
       crashLogList: [],
       allChaneList: [
-        { label: "全部", id: "" },
-        { label: "安卓", id: "安卓" },
-        { label: "苹果", id: "苹果" },
-      ],
-    };
+        { label: '全部', id: '' },
+        { label: '安卓', id: '安卓' },
+        { label: '苹果', id: '苹果' }
+      ]
+    }
   },
   mounted() {},
   methods: {
     copyRowId(id) {
-      const textarea = document.createElement("textarea");
-      textarea.value = id;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
-      this.$message.success("复制成功！");
-    },
-    initMap() {
-      echarts.registerMap("taiwan", taiwan);
-      const myChart = echarts.init(document.getElementById("chartOne"));
-      var option = {
-        visualMap: {
-          min: 0,
-          max: 1000,
-          realtime: false,
-          calculable: true,
-          inRange: {
-            color: ["#fff", "#2c7be5"],
-          },
-        },
-        tooltip: {
-          // 悬浮框
-          trigger: "item", // 触发条件
-          backgroundColor: "RGBA(136, 123, 135, 0.8)",
-          formatter: "{b}<br/>案件数{c}", // 自定义显示数据
-          textStyle: {
-            color: "#ffffff",
-            fontSize: 8,
-          },
-        },
-        series: [
-          {
-            type: "map",
-            map: "taiwan",
-            zoom: 1.1,
-            label: {
-              show: true, // 显示
-              textStyle: {
-                fontSize: 8,
-                position: "insideTop",
-              },
-            },
-            itemStyle: {
-              normal: {
-                borderColor: "rgba(0, 0, 0, 0.2)",
-              },
-              emphasis: {
-                shadowOffsetX: 0,
-                shadowOffsetY: 0,
-                shadowBlur: 20,
-                borderWidth: 0,
-                shadowColor: "rgba(0, 0, 0, 0.5)",
-              },
-            },
-            // 数据
-            data: [
-              { name: "台北市", value: 100 },
-              { name: "高雄市", value: 200 },
-              // ... 其他市县数据
-            ],
-          },
-        ],
-      };
-      myChart.setOption(option);
+      const textarea = document.createElement('textarea')
+      textarea.value = id
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textarea)
+      this.$message.success('复制成功！')
     },
     tableHeaderColor({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 6) {
-        return "text-align:left";
+        return 'text-align:left'
       } else {
-        return "text-align:center";
+        return 'text-align:center'
       }
     },
     handleDetailDialog(row) {
-      this.$refs.collapseDetail.openErrorLog(row);
+      this.$refs.collapseDetail.openErrorLog(row)
     },
     handleRowClick(row) {
-      this.$refs.dialogCollapase.openDialogEvent(row, this.commonParams);
+      this.$refs.dialogCollapase.openDialogEvent(row, this.commonParams)
+    },
+    getCrashCountRate(row) {
+      const total = this.dataSumList.reduce((sum, item) => {
+        return sum + Number(item.crashedCount || 0)
+      }, 0)
+      if (!total) {
+        return 0
+      }
+      return Number(row.crashedCount || 0) / total
     },
     getIndex($index) {
-      return (this.pageNum - 1) * this.pageSize + $index + 1;
+      return (this.pageNum - 1) * this.pageSize + $index + 1
     },
     paramsEvent(params) {
-      this.commonParams = copyObj(params);
-      this.currentTime = [params.startTime, params.endTime];
-      this.checkApiType(this.activeTab);
+      this.commonParams = copyObj(params)
+      this.currentTime = [params.startTime, params.endTime]
+      this.checkApiType(this.activeTab)
     },
     changSystemEvent(type) {
-      this.checkApiType(this.activeTab);
+      this.checkApiType(this.activeTab)
     },
     searchEvent() {
-      this.checkApiType(this.activeTab);
+      this.checkApiType(this.activeTab)
     },
     handleClear() {
-      this.checkApiType(this.activeTab);
+      this.checkApiType(this.activeTab)
     },
     checkDatePick(time) {
-      this.checkApiType(this.activeTab);
+      this.checkApiType(this.activeTab)
     },
     checkApiType(type) {
-      this.commonParams.pageSize = this.pageSize;
-      this.commonParams.pageNum = this.pageNum;
-      this.commonParams.version = this.version;
-      this.commonParams.channel = this.channelValue ? [this.channelValue] : [];
-      this.loadingRefresh = true;
-      if (type == "数据汇总") {
-      } else {
-        let params = copyObj(this.commonParams);
-        params.startTime = this.currentTime[0];
-        params.endTime = this.currentTime[1];
-        getPageApi(params)
+      const params = copyObj(this.commonParams)
+      params.version = this.version
+      params.channel = this.channelValue ? [this.channelValue] : []
+      this.loadingRefresh = true
+      if (type === '数据汇总') {
+        groupedSummaryApi(params)
           .then((res) => {
-            if (res.code == 200) {
-              this.loadingRefresh = false;
-              this.total = res.data.total;
-              this.crashLogList = res.data.rows;
+            if (res.code === 200) {
+              this.dataSumList = res.data || []
             }
+            this.loadingRefresh = false
           })
           .catch(() => {
-            this.loadingRefresh = false;
-          });
+            this.loadingRefresh = false
+          })
+      } else {
+        params.startTime = this.currentTime[0]
+        params.endTime = this.currentTime[1]
+        params.pageSize = this.pageSize
+        params.pageNum = this.pageNum
+        getPageApi(params)
+          .then((res) => {
+            if (res.code === 200) {
+              this.total = res.data.total
+              this.crashLogList = res.data.rows
+            }
+            this.loadingRefresh = false
+          })
+          .catch(() => {
+            this.loadingRefresh = false
+          })
       }
     },
     handleClick(val) {
-      this.pageSize = 10;
-      this.pageNum = 1;
-      this.checkApiType(this.activeTab);
+      this.pageSize = 10
+      this.pageNum = 1
+      this.checkApiType(this.activeTab)
     },
     handleSizeChange(val) {
-      this.pageNum = 1;
-      this.pageSize = val;
-      this.checkApiType("崩溃日志");
+      this.pageNum = 1
+      this.pageSize = val
+      this.checkApiType(this.activeTab)
     },
     handleCurrentChange(val) {
-      this.pageNum = val;
-      this.checkApiType("崩溃日志");
-    },
-  },
-};
+      this.pageNum = val
+      this.checkApiType(this.activeTab)
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

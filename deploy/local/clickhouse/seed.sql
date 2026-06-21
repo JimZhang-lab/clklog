@@ -6,14 +6,14 @@ INSERT INTO log_analysis
   latest_search_keyword, create_time
 )
 VALUES
-  ('clklogapp', 'ddf51db3-7c99-1310-a44f-79feb7b63c69', '127.0.0.11', 'demo-user-001', now() - INTERVAL 120 MINUTE, today(), formatDateTime(now() - INTERVAL 120 MINUTE, '%H'), '$pageview', 'js', 'true', '中国', '上海', '上海', 'Apple', 'session-001', 'http://localhost/products', 'http://localhost/products', '/products', '产品列表', '直接访问', '', now()),
-  ('clklogapp', 'ddf51db3-7c99-1310-a44f-79feb7b63c69', '127.0.0.11', 'demo-user-001', now() - INTERVAL 100 MINUTE, today(), formatDateTime(now() - INTERVAL 100 MINUTE, '%H'), 'signup', 'js', 'true', '中国', '上海', '上海', 'Apple', 'session-001', 'http://localhost/signup', 'http://localhost/signup', '/signup', '注册', '直接访问', '', now()),
-  ('clklogapp', 'ddf51db3-7c99-1310-a44f-79feb7b63c69', '127.0.0.11', 'demo-user-001', now() - INTERVAL 70 MINUTE, today(), formatDateTime(now() - INTERVAL 70 MINUTE, '%H'), 'add_cart', 'js', 'true', '中国', '上海', '上海', 'Apple', 'session-001', 'http://localhost/cart', 'http://localhost/cart', '/cart', '购物车', '直接访问', '', now()),
-  ('clklogapp', 'ddf51db3-7c99-1310-a44f-79feb7b63c69', '127.0.0.11', 'demo-user-001', now() - INTERVAL 30 MINUTE, today(), formatDateTime(now() - INTERVAL 30 MINUTE, '%H'), 'purchase', 'js', 'true', '中国', '上海', '上海', 'Apple', 'session-001', 'http://localhost/order/success', 'http://localhost/order/success', '/order/success', '支付成功', '直接访问', '', now()),
-  ('clklogapp', 'ddf51db3-7c99-1310-a44f-79feb7b63c69', '127.0.0.12', 'demo-user-002', now() - INTERVAL 110 MINUTE, today(), formatDateTime(now() - INTERVAL 110 MINUTE, '%H'), '$pageview', 'js', 'true', '中国', '北京', '北京', 'Huawei', 'session-002', 'http://localhost/products', 'http://localhost/products', '/products', '产品列表', '直接访问', '', now()),
-  ('clklogapp', 'ddf51db3-7c99-1310-a44f-79feb7b63c69', '127.0.0.12', 'demo-user-002', now() - INTERVAL 90 MINUTE, today(), formatDateTime(now() - INTERVAL 90 MINUTE, '%H'), 'signup', 'js', 'true', '中国', '北京', '北京', 'Huawei', 'session-002', 'http://localhost/signup', 'http://localhost/signup', '/signup', '注册', '直接访问', '', now()),
-  ('clklogapp', 'ddf51db3-7c99-1310-a44f-79feb7b63c69', '127.0.0.12', 'demo-user-002', now() - INTERVAL 50 MINUTE, today(), formatDateTime(now() - INTERVAL 50 MINUTE, '%H'), 'add_cart', 'js', 'true', '中国', '北京', '北京', 'Huawei', 'session-002', 'http://localhost/cart', 'http://localhost/cart', '/cart', '购物车', '直接访问', '', now()),
-  ('clklogapp', 'ddf51db3-7c99-1310-a44f-79feb7b63c69', '127.0.0.13', 'demo-user-003', now() - INTERVAL 45 MINUTE, today(), formatDateTime(now() - INTERVAL 45 MINUTE, '%H'), '$pageview', 'js', 'false', '中国', '广东', '深圳', 'Xiaomi', 'session-003', 'http://localhost/', 'http://localhost/', '/', '首页', '直接访问', '', now());
+  ('clklogapp', 'ddf51db3-7c99-1310-a44f-79feb7b63c69', '127.0.0.11', 'demo-user-001', now('Asia/Shanghai') - INTERVAL 120 MINUTE, toDate(now('Asia/Shanghai')), formatDateTime(now('Asia/Shanghai') - INTERVAL 120 MINUTE, '%H'), '$pageview', 'js', 'true', '中国', '上海', '上海', 'Apple', 'session-001', 'http://localhost/products', 'http://localhost/products', '/products', '产品列表', '直接访问', '', now('Asia/Shanghai')),
+  ('clklogapp', 'ddf51db3-7c99-1310-a44f-79feb7b63c69', '127.0.0.11', 'demo-user-001', now('Asia/Shanghai') - INTERVAL 100 MINUTE, toDate(now('Asia/Shanghai')), formatDateTime(now('Asia/Shanghai') - INTERVAL 100 MINUTE, '%H'), 'signup', 'js', 'true', '中国', '上海', '上海', 'Apple', 'session-001', 'http://localhost/signup', 'http://localhost/signup', '/signup', '注册', '直接访问', '', now('Asia/Shanghai')),
+  ('clklogapp', 'ddf51db3-7c99-1310-a44f-79feb7b63c69', '127.0.0.11', 'demo-user-001', now('Asia/Shanghai') - INTERVAL 70 MINUTE, toDate(now('Asia/Shanghai')), formatDateTime(now('Asia/Shanghai') - INTERVAL 70 MINUTE, '%H'), 'add_cart', 'js', 'true', '中国', '上海', '上海', 'Apple', 'session-001', 'http://localhost/cart', 'http://localhost/cart', '/cart', '购物车', '直接访问', '', now('Asia/Shanghai')),
+  ('clklogapp', 'ddf51db3-7c99-1310-a44f-79feb7b63c69', '127.0.0.11', 'demo-user-001', now('Asia/Shanghai') - INTERVAL 30 MINUTE, toDate(now('Asia/Shanghai')), formatDateTime(now('Asia/Shanghai') - INTERVAL 30 MINUTE, '%H'), 'purchase', 'js', 'true', '中国', '上海', '上海', 'Apple', 'session-001', 'http://localhost/order/success', 'http://localhost/order/success', '/order/success', '支付成功', '直接访问', '', now('Asia/Shanghai')),
+  ('clklogapp', 'ddf51db3-7c99-1310-a44f-79feb7b63c69', '127.0.0.12', 'demo-user-002', now('Asia/Shanghai') - INTERVAL 110 MINUTE, toDate(now('Asia/Shanghai')), formatDateTime(now('Asia/Shanghai') - INTERVAL 110 MINUTE, '%H'), '$pageview', 'js', 'true', '中国', '北京', '北京', 'Huawei', 'session-002', 'http://localhost/products', 'http://localhost/products', '/products', '产品列表', '直接访问', '', now('Asia/Shanghai')),
+  ('clklogapp', 'ddf51db3-7c99-1310-a44f-79feb7b63c69', '127.0.0.12', 'demo-user-002', now('Asia/Shanghai') - INTERVAL 90 MINUTE, toDate(now('Asia/Shanghai')), formatDateTime(now('Asia/Shanghai') - INTERVAL 90 MINUTE, '%H'), 'signup', 'js', 'true', '中国', '北京', '北京', 'Huawei', 'session-002', 'http://localhost/signup', 'http://localhost/signup', '/signup', '注册', '直接访问', '', now('Asia/Shanghai')),
+  ('clklogapp', 'ddf51db3-7c99-1310-a44f-79feb7b63c69', '127.0.0.12', 'demo-user-002', now('Asia/Shanghai') - INTERVAL 50 MINUTE, toDate(now('Asia/Shanghai')), formatDateTime(now('Asia/Shanghai') - INTERVAL 50 MINUTE, '%H'), 'add_cart', 'js', 'true', '中国', '北京', '北京', 'Huawei', 'session-002', 'http://localhost/cart', 'http://localhost/cart', '/cart', '购物车', '直接访问', '', now('Asia/Shanghai')),
+  ('clklogapp', 'ddf51db3-7c99-1310-a44f-79feb7b63c69', '127.0.0.13', 'demo-user-003', now('Asia/Shanghai') - INTERVAL 45 MINUTE, toDate(now('Asia/Shanghai')), formatDateTime(now('Asia/Shanghai') - INTERVAL 45 MINUTE, '%H'), '$pageview', 'js', 'false', '中国', '广东', '深圳', 'Xiaomi', 'session-003', 'http://localhost/', 'http://localhost/', '/', '首页', '直接访问', '', now('Asia/Shanghai'));
 
 INSERT INTO flow_trend_bydate
 (
@@ -21,8 +21,8 @@ INSERT INTO flow_trend_bydate
   visit_count, uv, new_uv, ip_count, visit_time, bounce_count, update_time
 )
 VALUES
-  (today(), 'all', 'clklogapp', 'all', 'all', 'all', 8, 3, 3, 2, 3, 8400, 1, now()),
-  (today() - 1, 'all', 'clklogapp', 'all', 'all', 'all', 4, 2, 2, 1, 2, 3600, 1, now());
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'all', 'all', 'all', 8, 3, 3, 2, 3, 8400, 1, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')) - 1, 'all', 'clklogapp', 'all', 'all', 'all', 4, 2, 2, 1, 2, 3600, 1, now('Asia/Shanghai'));
 
 INSERT INTO flow_trend_byhour
 (
@@ -30,9 +30,9 @@ INSERT INTO flow_trend_byhour
   pv, visit_count, uv, new_uv, ip_count, visit_time, bounce_count, update_time
 )
 VALUES
-  (today(), formatDateTime(now() - INTERVAL 2 HOUR, '%H'), 'all', 'clklogapp', 'all', 'all', 'all', 3, 2, 2, 2, 2, 3600, 0, now()),
-  (today(), formatDateTime(now() - INTERVAL 1 HOUR, '%H'), 'all', 'clklogapp', 'all', 'all', 'all', 3, 1, 2, 1, 2, 3000, 0, now()),
-  (today(), formatDateTime(now(), '%H'), 'all', 'clklogapp', 'all', 'all', 'all', 2, 1, 1, 0, 1, 1800, 1, now());
+  (toDate(now('Asia/Shanghai')), formatDateTime(now('Asia/Shanghai') - INTERVAL 2 HOUR, '%H'), 'all', 'clklogapp', 'all', 'all', 'all', 3, 2, 2, 2, 2, 3600, 0, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), formatDateTime(now('Asia/Shanghai') - INTERVAL 1 HOUR, '%H'), 'all', 'clklogapp', 'all', 'all', 'all', 3, 1, 2, 1, 2, 3000, 0, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), formatDateTime(now('Asia/Shanghai'), '%H'), 'all', 'clklogapp', 'all', 'all', 'all', 2, 1, 1, 0, 1, 1800, 1, now('Asia/Shanghai'));
 
 INSERT INTO visitor_detail_bydate
 (
@@ -40,18 +40,61 @@ INSERT INTO visitor_detail_bydate
   visit_count, uv, new_uv, ip_count, visit_time, bounce_count, update_time
 )
 VALUES
-  (today(), 'all', 'clklogapp', 'true', 'all', 'all', 7, 2, 2, 2, 2, 7200, 0, now()),
-  (today(), 'all', 'clklogapp', 'false', 'all', 'all', 1, 1, 1, 0, 1, 1200, 1, now());
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'true', 'all', 'all', 7, 2, 2, 2, 2, 7200, 0, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'false', 'all', 'all', 1, 1, 1, 0, 1, 1200, 1, now('Asia/Shanghai'));
+
+INSERT INTO visitor_life_bydate
+(
+  stat_date, lib, project_name, country, province, new_uv,
+  continuous_active_uv, revisit_uv, silent_uv, churn_uv, update_time
+)
+VALUES
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'all', 'all', 2, 1, 1, 1, 0, now('Asia/Shanghai'));
+
+INSERT INTO user_pv_bydate
+(
+  stat_date, lib, project_name, is_first_day, country, province,
+  pv1_uv, pv2_5_uv, pv6_10_uv, pv11_20_uv, pv21_30_uv,
+  pv31_40_uv, pv41_50_uv, pv51_100_uv, pv101_uv, update_time
+)
+VALUES
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'all', 'all', 'all', 1, 2, 0, 0, 0, 0, 0, 0, 0, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'true', 'all', 'all', 0, 2, 0, 0, 0, 0, 0, 0, 0, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'false', 'all', 'all', 1, 0, 0, 0, 0, 0, 0, 0, 0, now('Asia/Shanghai'));
+
+INSERT INTO user_visit_bydate
+(
+  stat_date, lib, project_name, is_first_day, country, province,
+  v1_uv, v2_uv, v3_uv, v4_uv, v5_uv, v6_uv, v7_uv, v8_uv, v9_uv, v10_uv,
+  v11_15_uv, v16_50_uv, v51_100_uv, v101_200_uv, v201_300_uv, v300_uv,
+  update_time
+)
+VALUES
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'all', 'all', 'all', 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'true', 'all', 'all', 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'false', 'all', 'all', 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, now('Asia/Shanghai'));
+
+INSERT INTO user_visittime_bydate
+(
+  stat_date, lib, project_name, is_first_day, country, province,
+  vt0_10_uv, vt10_30_uv, vt30_60_uv, vt60_120_uv, vt120_180_uv,
+  vt180_240_uv, vt240_300_uv, vt300_600_uv, vt600_1800_uv,
+  vt1800_3600_uv, vt3600_uv, update_time
+)
+VALUES
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'all', 'all', 'all', 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'true', 'all', 'all', 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'false', 'all', 'all', 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, now('Asia/Shanghai'));
 
 INSERT INTO visituri_summary_bydate
 (stat_date, lib, project_name, uri, title, pv, update_time)
 VALUES
-  (today(), 'all', 'clklogapp', 'all', 'all', 8, now()),
-  (today(), 'all', 'clklogapp', 'http://localhost/products', '产品列表', 2, now()),
-  (today(), 'all', 'clklogapp', 'http://localhost/signup', '注册', 2, now()),
-  (today(), 'all', 'clklogapp', 'http://localhost/cart', '购物车', 2, now()),
-  (today(), 'all', 'clklogapp', 'http://localhost/order/success', '支付成功', 1, now()),
-  (today(), 'all', 'clklogapp', 'http://localhost/', '首页', 1, now());
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'all', 'all', 8, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'http://localhost/products', '产品列表', 2, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'http://localhost/signup', '注册', 2, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'http://localhost/cart', '购物车', 2, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'http://localhost/order/success', '支付成功', 1, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'http://localhost/', '首页', 1, now('Asia/Shanghai'));
 
 INSERT INTO sourcesite_detail_bydate
 (
@@ -59,8 +102,8 @@ INSERT INTO sourcesite_detail_bydate
   pv, visit_count, uv, new_uv, ip_count, visit_time, bounce_count, update_time
 )
 VALUES
-  (today(), 'all', 'clklogapp', 'all', 'all', 'all', 'all', 8, 3, 3, 2, 3, 8400, 1, now()),
-  (today(), 'all', 'clklogapp', 'all', 'all', 'all', '直接访问', 8, 3, 3, 2, 3, 8400, 1, now());
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'all', 'all', 'all', 'all', 8, 3, 3, 2, 3, 8400, 1, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'all', 'all', 'all', '直接访问', 8, 3, 3, 2, 3, 8400, 1, now('Asia/Shanghai'));
 
 INSERT INTO searchword_detail_bydate
 (
@@ -68,7 +111,7 @@ INSERT INTO searchword_detail_bydate
   pv, visit_count, uv, new_uv, ip_count, visit_time, bounce_count, update_time
 )
 VALUES
-  (today(), 'all', 'clklogapp', 'all', 'all', 'all', 'all', 0, 0, 0, 0, 0, 0, 0, now());
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'all', 'all', 'all', 'all', 0, 0, 0, 0, 0, 0, 0, now('Asia/Shanghai'));
 
 INSERT INTO area_detail_bydate
 (
@@ -76,10 +119,10 @@ INSERT INTO area_detail_bydate
   visit_count, uv, new_uv, ip_count, visit_time, bounce_count, update_time
 )
 VALUES
-  (today(), 'all', 'clklogapp', 'all', 'all', 'all', 'all', 8, 3, 3, 2, 3, 8400, 1, now()),
-  (today(), 'all', 'clklogapp', 'all', '上海', '上海', '上海', 4, 1, 1, 1, 1, 4200, 0, now()),
-  (today(), 'all', 'clklogapp', 'all', '北京', '北京', '北京', 3, 1, 1, 1, 1, 3000, 0, now()),
-  (today(), 'all', 'clklogapp', 'all', '广东', '广东', '深圳', 1, 1, 1, 0, 1, 1200, 1, now());
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'all', 'all', 'all', 'all', 8, 3, 3, 2, 3, 8400, 1, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'all', '上海', '上海', '上海', 4, 1, 1, 1, 1, 4200, 0, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'all', '北京', '北京', '北京', 3, 1, 1, 1, 1, 3000, 0, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'all', 'clklogapp', 'all', '广东', '广东', '深圳', 1, 1, 1, 0, 1, 1200, 1, now('Asia/Shanghai'));
 
 INSERT INTO visitor_detail_byinfo
 (
@@ -88,9 +131,9 @@ INSERT INTO visitor_detail_byinfo
   visit_count, pv, update_time
 )
 VALUES
-  (today(), 'js', 'clklogapp', 'true', '中国', '上海', '上海', 'demo-user-001', '127.0.0.11', 'Apple', now() - INTERVAL 30 MINUTE, now() - INTERVAL 120 MINUTE, 5400, 1, 4, now()),
-  (today(), 'js', 'clklogapp', 'true', '中国', '北京', '北京', 'demo-user-002', '127.0.0.12', 'Huawei', now() - INTERVAL 50 MINUTE, now() - INTERVAL 110 MINUTE, 3600, 1, 3, now()),
-  (today(), 'js', 'clklogapp', 'false', '中国', '广东', '深圳', 'demo-user-003', '127.0.0.13', 'Xiaomi', now() - INTERVAL 45 MINUTE, now() - INTERVAL 45 MINUTE, 1200, 1, 1, now());
+  (toDate(now('Asia/Shanghai')), 'js', 'clklogapp', 'true', '中国', '上海', '上海', 'demo-user-001', '127.0.0.11', 'Apple', now('Asia/Shanghai') - INTERVAL 30 MINUTE, now('Asia/Shanghai') - INTERVAL 120 MINUTE, 5400, 1, 4, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'js', 'clklogapp', 'true', '中国', '北京', '北京', 'demo-user-002', '127.0.0.12', 'Huawei', now('Asia/Shanghai') - INTERVAL 50 MINUTE, now('Asia/Shanghai') - INTERVAL 110 MINUTE, 3600, 1, 3, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'js', 'clklogapp', 'false', '中国', '广东', '深圳', 'demo-user-003', '127.0.0.13', 'Xiaomi', now('Asia/Shanghai') - INTERVAL 45 MINUTE, now('Asia/Shanghai') - INTERVAL 45 MINUTE, 1200, 1, 1, now('Asia/Shanghai'));
 
 INSERT INTO visitor_detail_bysession
 (
@@ -99,6 +142,6 @@ INSERT INTO visitor_detail_bysession
   visit_time, pv, update_time
 )
 VALUES
-  (today(), 'clklogapp', '中国', '上海', '127.0.0.11', '直接访问', '', 'demo-user-001', 'session-001', now() - INTERVAL 120 MINUTE, now() - INTERVAL 30 MINUTE, 5400, 4, now()),
-  (today(), 'clklogapp', '中国', '北京', '127.0.0.12', '直接访问', '', 'demo-user-002', 'session-002', now() - INTERVAL 110 MINUTE, now() - INTERVAL 50 MINUTE, 3600, 3, now()),
-  (today(), 'clklogapp', '中国', '广东', '127.0.0.13', '直接访问', '', 'demo-user-003', 'session-003', now() - INTERVAL 45 MINUTE, now() - INTERVAL 45 MINUTE, 1200, 1, now());
+  (toDate(now('Asia/Shanghai')), 'clklogapp', '中国', '上海', '127.0.0.11', '直接访问', '', 'demo-user-001', 'session-001', now('Asia/Shanghai') - INTERVAL 120 MINUTE, now('Asia/Shanghai') - INTERVAL 30 MINUTE, 5400, 4, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'clklogapp', '中国', '北京', '127.0.0.12', '直接访问', '', 'demo-user-002', 'session-002', now('Asia/Shanghai') - INTERVAL 110 MINUTE, now('Asia/Shanghai') - INTERVAL 50 MINUTE, 3600, 3, now('Asia/Shanghai')),
+  (toDate(now('Asia/Shanghai')), 'clklogapp', '中国', '广东', '127.0.0.13', '直接访问', '', 'demo-user-003', 'session-003', now('Asia/Shanghai') - INTERVAL 45 MINUTE, now('Asia/Shanghai') - INTERVAL 45 MINUTE, 1200, 1, now('Asia/Shanghai'));

@@ -30,6 +30,12 @@ public class UserVisitController {
     	return reportService.getUserPv(getUserVisitRequest);
     }
 
+    @Operation(summary = "获取各访问深度区间内的访问次数")
+    @RequestMapping(path = "/getUserDepth", method = RequestMethod.POST)
+    public GetUserPvbydateResponse getUserDepth(@RequestBody GetUserVisitRequest getUserVisitRequest, HttpServletRequest request) {
+        return reportService.getUserDepth(getUserVisitRequest);
+    }
+
     @Operation(summary = "获取各访问次数区间内的访客数")
     @RequestMapping(path = "/getUserVisit", method = RequestMethod.POST)
     public GetUserVisitbydateResponse getUserVisit(@RequestBody GetUserVisitRequest getUserVisitRequest, HttpServletRequest request) {

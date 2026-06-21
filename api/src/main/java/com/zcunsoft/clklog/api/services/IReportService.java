@@ -95,6 +95,8 @@ public interface IReportService {
 
     GetUserPvbydateResponse getUserPv(GetUserVisitRequest getUserVisitRequest);
 
+    GetUserPvbydateResponse getUserDepth(GetUserVisitRequest getUserVisitRequest);
+
     GetUserLatestTimebydateResponse getUserLatestTime(GetUserVisitRequest getUserVisitRequest);
 
     Timestamp getProjectNameStartStatDate();

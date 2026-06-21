@@ -2233,8 +2233,85 @@ public class ReportServiceImpl implements IReportService {
         return response;
     }
 
+    @Override
+    public GetUserPvbydateResponse getUserDepth(GetUserVisitRequest getUserVisitRequest) {
+        MapSqlParameterSource paramMap = new MapSqlParameterSource();
+        String where = "";
+
+        where = buildChannelByAllFilter(getUserVisitRequest.getChannel(), paramMap, where);
+        where = buildStatDateStartFilter(getUserVisitRequest.getStartTime(), paramMap, where);
+        where = buildStatDateEndFilter(getUserVisitRequest.getEndTime(), paramMap, where);
+        where = buildProjectNameFilter(getUserVisitRequest.getProjectName(), paramMap, where);
+        where = buildVisitorTypeByAllFilter(getUserVisitRequest.getVisitorType(), paramMap, where);
+        where = buildCountryByAllFilter(getUserVisitRequest.getCountry(), paramMap, where);
+        where = buildProvinceByAllFilter(getUserVisitRequest.getProvince(), paramMap, where);
+
+        String sql = "select"
+                + " countIf(page_depth = 1) as pv1Uv,"
+                + " countIf(page_depth >= 2 and page_depth <= 5) as pv2_5Uv,"
+                + " countIf(page_depth >= 6 and page_depth <= 10) as pv6_10Uv,"
+                + " countIf(page_depth >= 11 and page_depth <= 20) as pv11_20Uv,"
+                + " countIf(page_depth >= 21 and page_depth <= 30) as pv21_30Uv,"
+                + " countIf(page_depth >= 31 and page_depth <= 40) as pv31_40Uv,"
+                + " countIf(page_depth >= 41 and page_depth <= 50) as pv41_50Uv,"
+                + " countIf(page_depth >= 51 and page_depth <= 100) as pv51_100Uv,"
+                + " countIf(page_depth >= 101) as pv101Uv"
+                + " from ("
+                + " select uniqExact(if(t.url_path = '', t.url, t.url_path)) as page_depth"
+                + " from log_analysis t";
+
+        if (StringUtils.isNotBlank(where)) {
+            sql += " where " + where.substring(4);
+            sql += " and t.distinct_id <> ''"
+                    + " and t.event_session_id <> ''"
+                    + " and ((t.lib = 'js' and t.event = '$pageview')"
+                    + " or (t.lib in ('iOS', 'Android') and t.event = '$AppViewScreen')"
+                    + " or (t.lib = 'MiniProgram' and t.event = '$MPViewScreen'))"
+                    + " and (t.url_path <> '' or t.url <> '')";
+        } else {
+            sql += " where t.distinct_id <> ''"
+                    + " and t.event_session_id <> ''"
+                    + " and ((t.lib = 'js' and t.event = '$pageview')"
+                    + " or (t.lib in ('iOS', 'Android') and t.event = '$AppViewScreen')"
+                    + " or (t.lib = 'MiniProgram' and t.event = '$MPViewScreen'))"
+                    + " and (t.url_path <> '' or t.url <> '')";
+        }
+        sql += " group by t.project_name, t.distinct_id, t.event_session_id) depth";
+
+        List<UserPvbydate> userPvbydateList = clickHouseJdbcTemplate.query(sql, paramMap, new BeanPropertyRowMapper<UserPvbydate>(UserPvbydate.class));
+        GetUserPvbydateResponse response = new GetUserPvbydateResponse();
+        List<BaseUserVisit> baseUserVisitList = new ArrayList<BaseUserVisit>();
+
+        if (userPvbydateList.size() > 0) {
+            UserPvbydate userPvbydate = userPvbydateList.get(0);
+            int total = userPvbydate.getPv1Uv() + userPvbydate.getPv2_5Uv() + userPvbydate.getPv6_10Uv()
+                    + userPvbydate.getPv11_20Uv() + userPvbydate.getPv21_30Uv() + userPvbydate.getPv31_40Uv()
+                    + userPvbydate.getPv41_50Uv() + userPvbydate.getPv51_100Uv() + userPvbydate.getPv101Uv();
+
+            addBaseUserVisit(baseUserVisitList, "1页", userPvbydate.getPv1Uv(), total);
+            addBaseUserVisit(baseUserVisitList, "2-5页", userPvbydate.getPv2_5Uv(), total);
+            addBaseUserVisit(baseUserVisitList, "6-10页", userPvbydate.getPv6_10Uv(), total);
+            addBaseUserVisit(baseUserVisitList, "11-20页", userPvbydate.getPv11_20Uv(), total);
+            addBaseUserVisit(baseUserVisitList, "21-30页", userPvbydate.getPv21_30Uv(), total);
+            addBaseUserVisit(baseUserVisitList, "31-40页", userPvbydate.getPv31_40Uv(), total);
+            addBaseUserVisit(baseUserVisitList, "41-50页", userPvbydate.getPv41_50Uv(), total);
+            addBaseUserVisit(baseUserVisitList, "51-100页", userPvbydate.getPv51_100Uv(), total);
+            addBaseUserVisit(baseUserVisitList, "100页以上", userPvbydate.getPv101Uv(), total);
+        }
+        response.setData(baseUserVisitList);
+        return response;
+    }
+
     private float getRate(int total,int value) {
     	return total > 0 ? value * 1.0f / total : 0.0f;
+    }
+
+    private void addBaseUserVisit(List<BaseUserVisit> baseUserVisitList, String key, int value, int total) {
+        BaseUserVisit baseUserVisit = new BaseUserVisit();
+        baseUserVisit.setKey(key);
+        baseUserVisit.setValue(value);
+        baseUserVisit.setRate(getRate(total, value));
+        baseUserVisitList.add(baseUserVisit);
     }
 
     @Override

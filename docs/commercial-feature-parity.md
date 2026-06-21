@@ -20,6 +20,7 @@
 | 访客分析 | 新老访客、地域、来源、渠道、设备 | 已实现 |
 | 访问分析 | 受访页、结构页、入口页、退出页、搜索词 | 已实现 |
 | 用户分析 | 画像、活跃、忠诚、留存/流失、回流/沉默 | 已实现 |
+| App 崩溃分析 | `#/crashAnalysis/crash` | 已实现并连接 ClickHouse |
 | 事件分析 | 元事件、属性、日志、统计、书签、自定义分析 | 已实现 |
 | 漏斗分析 | `#/mete/funnelAnalysis` | 已实现并连接 ClickHouse |
 | CDP | 标签分类、用户标签、分群、画像、用户细查 | 已实现并持久化 MySQL |
@@ -27,6 +28,70 @@
 | 权限管理 | 账号、角色、菜单 | 已实现 |
 | API 密钥 | `#/apiKey/manage` | 已实现完整生命周期 |
 | 自定义 SQL | `/tabix/` | 已实现本地只读查询 |
+
+## 用户分析
+
+官方入口：
+
+- `#/userbehavior/userBehavior`：用户画像。
+- `#/userbehavior/activeUsers`：活跃用户分析。
+- `#/userbehavior/loyaltyAnalysis`：忠诚度分析。
+- `#/userbehavior/retainedUsers`：流失/留存用户。
+- `#/userbehavior/silentUsers`：回流/沉默用户。
+
+官方页面能力：
+
+- 用户画像：按时间、渠道、访客类型和地域筛选，展示用户 ID、访客类型、浏览量、
+  访问次数、平均访问页数、停留时长、上次访问时间和访问详情。
+- 活跃用户分析：日活跃、周活跃和月活跃切换，近 7 天、近 14 天和近 30 天范围，
+  展示活跃趋势和日期、用户总数、活跃数表格。
+- 忠诚度分析：访问页数、访问深度、访问时长、上次访问时间和访问频次五个页签，
+  每个页签包含分布图和占比表格。
+- 流失/留存用户：按日、按周、按月，过去 7 天、过去 14 天和过去 30 天范围，
+  支持流失与留存切换，展示留存矩阵和流失趋势。
+- 回流/沉默用户：按日、按周、按月，近 7 天、近 14 天和近 30 天范围，展示
+  累计用户数、回流用户数、沉默用户数、老用户数、新用户数和用户数。
+
+本地实现：
+
+- 用户画像保留 ClickHouse 用户列表与用户细查弹窗，并补齐官方“访问详情”列。
+- 新增 Analytics API `/user/getUserActiveTrend`、`/user/getUserRemainTrend`、
+  `/user/getUserChurnTrend`、`/user/getUserRevisitAndSilentTrend`。
+- 活跃用户读取 `visitor_detail_bydate`，回流、沉默和流失读取 `visitor_life_bydate`，
+  留存矩阵基于 `visitor_detail_byinfo` 的 `projectName + distinctId + stat_date`
+  计算后续 1 到 7 天留存。
+- 忠诚度前端接入 `/uservisit/getUserPv`、`getUserDepth`、`getUserVisitTime`、
+  `getUserLatestTime` 和 `getUserVisit`。其中访问深度基于 `log_analysis`
+  按会话统计去重页面数。
+- 本地 ClickHouse seed 补充 `visitor_life_bydate` 演示数据，确保前端、API 和
+  ClickHouse 联通后有可见结果。
+
+## App 崩溃分析
+
+官方入口：`#/crashAnalysis/crash`
+
+官方页面能力：
+
+- 今日、昨日、过去 7 天、过去 30 天和自定义时间范围。
+- 按日、按周、按月粒度。
+- 流量概览：访问次数、崩溃触发次数、崩溃率、访问用户数、崩溃触发用户数、
+  崩溃触发用户数占比。
+- 趋势图：崩溃率、iOS 应用版本崩溃率、Android 应用版本崩溃率，并支持选择
+  崩溃触发次数、崩溃率、崩溃用户数等指标。
+- 数据汇总页签：按应用版本与操作系统汇总设备型号数、访问次数、崩溃次数、
+  崩溃率、访问用户数、崩溃触发用户数、崩溃触发用户占比和崩溃数占比。
+- 崩溃日志页签：展示崩溃时间、应用版本、操作系统、操作系统版本、设备型号、
+  崩溃详情信息和会话 ID。
+
+本地实现：
+
+- 本地入口：`/#/crashAnalysis/crash`。
+- Analytics API：`/appCrashed/totalSummary`、`trendSummary`、
+  `groupedSummary`、`getPagedSummary`、`getPage`。
+- ClickHouse 表：`crashed_detail_bydate` 和 `log_analysis` 中的
+  `AppCrashed` 原始事件。
+- 主页面默认展示“数据汇总”页签，并可继续下钻查看设备型号汇总与崩溃日志。
+- 崩溃详情弹窗保留崩溃时间、应用版本、操作系统、系统版本、设备型号和堆栈信息。
 
 ## 漏斗分析
 
@@ -136,6 +201,9 @@
 - Manage 与 Analytics API Maven 编译通过。
 - 前端开发构建成功。
 - 本轮前端文件定向 ESLint 通过。
+- 用户分析 5 个菜单逐页对照官方示例并在浏览器验证无控制台错误。
+- 用户分析新增 API 使用本地 token 验证通过，并返回 ClickHouse 种子数据。
+- App 崩溃分析主页面补齐官方“数据汇总”页签，并通过定向 ESLint。
 - API 密钥完成列表、新建、一次性回显、编辑和删除。
 - 自定义 SQL 返回 ClickHouse 事件统计。
 - `DROP TABLE` 等写操作被服务端拒绝。
