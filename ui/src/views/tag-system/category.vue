@@ -74,108 +74,108 @@ import {
   addCategoryApi,
   deleteCategoryApi,
   editCategoryApi,
-  getCategoryTreeApi,
-} from "@/api/sysmanage/userTag";
+  getCategoryTreeApi
+} from '@/api/sysmanage/userTag'
 
 export default {
-  name: "TagCategory",
+  name: 'TagCategory',
   data() {
     return {
       tree: [],
       saving: false,
       form: this.emptyForm(),
       rules: {
-        displayName: [{ required: true, message: "请输入分类显示名", trigger: "blur" }],
-      },
-    };
+        displayName: [{ required: true, message: '请输入分类显示名', trigger: 'blur' }]
+      }
+    }
   },
   computed: {
     projectName() {
-      return this.$store.getters.projectName;
+      return this.$store.getters.projectName
     },
     flatCategories() {
-      const result = [];
+      const result = []
       const walk = (nodes, prefix) => {
         (nodes || []).forEach((item) => {
-          const pathName = prefix ? `${prefix} / ${item.displayName}` : item.displayName;
-          result.push(Object.assign({}, item, { pathName }));
-          walk(item.children, pathName);
-        });
-      };
-      walk(this.tree, "");
-      return result;
-    },
+          const pathName = prefix ? `${prefix} / ${item.displayName}` : item.displayName
+          result.push(Object.assign({}, item, { pathName }))
+          walk(item.children, pathName)
+        })
+      }
+      walk(this.tree, '')
+      return result
+    }
   },
   watch: {
     projectName() {
-      this.resetForm();
-      this.loadTree();
-    },
+      this.resetForm()
+      this.loadTree()
+    }
   },
   mounted() {
-    this.loadTree();
+    this.loadTree()
   },
   methods: {
     emptyForm() {
       return {
-        id: "",
-        parentId: "",
-        displayName: "",
+        id: '',
+        parentId: '',
+        displayName: '',
         sortOrder: 0,
-        status: "enabled",
-        description: "",
-      };
+        status: 'enabled',
+        description: ''
+      }
     },
     loadTree() {
       getCategoryTreeApi({ projectName: this.projectName }).then((res) => {
-        this.tree = res.data || [];
-      });
+        this.tree = res.data || []
+      })
     },
     selectNode(data) {
-      this.openEdit(data);
+      this.openEdit(data)
     },
     openAdd(parent) {
-      this.form = this.emptyForm();
-      this.form.parentId = parent ? parent.id : "";
+      this.form = this.emptyForm()
+      this.form.parentId = parent ? parent.id : ''
     },
     openEdit(data) {
-      this.form = Object.assign(this.emptyForm(), data);
-      delete this.form.children;
+      this.form = Object.assign(this.emptyForm(), data)
+      delete this.form.children
     },
     resetForm() {
-      this.form = this.emptyForm();
-      this.$nextTick(() => this.$refs.form && this.$refs.form.clearValidate());
+      this.form = this.emptyForm()
+      this.$nextTick(() => this.$refs.form && this.$refs.form.clearValidate())
     },
     submit() {
       this.$refs.form.validate((valid) => {
-        if (!valid) return;
-        this.saving = true;
-        const payload = Object.assign({ projectName: this.projectName }, this.form);
-        const request = payload.id ? editCategoryApi(payload) : addCategoryApi(payload);
+        if (!valid) return
+        this.saving = true
+        const payload = Object.assign({ projectName: this.projectName }, this.form)
+        const request = payload.id ? editCategoryApi(payload) : addCategoryApi(payload)
         request
           .then(() => {
-            this.$message.success("保存成功");
-            this.resetForm();
-            this.loadTree();
+            this.$message.success('保存成功')
+            this.resetForm()
+            this.loadTree()
           })
           .finally(() => {
-            this.saving = false;
-          });
-      });
+            this.saving = false
+          })
+      })
     },
     remove(data) {
-      this.$confirm(`确认删除分类“${data.displayName}”吗？`, "提示", {
-        type: "warning",
+      this.$confirm(`确认删除分类“${data.displayName}”吗？`, '提示', {
+        type: 'warning'
       }).then(() => {
-        deleteCategoryApi({ id: data.id }).then(() => {
-          this.$message.success("删除成功");
-          if (this.form.id === data.id) this.resetForm();
-          this.loadTree();
-        });
-      });
-    },
-  },
-};
+        deleteCategoryApi({ id: data.id, projectName: this.projectName }).then(() => {
+          this.$message.success('删除成功')
+          if (this.form.id === data.id) this.resetForm()
+          this.loadTree()
+        })
+      })
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

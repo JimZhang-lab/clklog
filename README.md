@@ -168,14 +168,18 @@ password: clklog
 | 忠诚度分析 | `/#/userbehavior/loyaltyAnalysis` |
 | 流失/留存用户 | `/#/userbehavior/retainedUsers` |
 | 回流/沉默用户 | `/#/userbehavior/silentUsers` |
-| 用户细查 | `/#/ups/userReview` |
 | 标签分类 | `/#/ups/tagCategory` |
-| 用户标签 | `/#/ups/userTag` |
-| 用户分群 | `/#/ups/userGroup` |
+| 用户标签 | `/#/ups/userTag`、`/#/ups/userTag/list` |
+| 用户分群 | `/#/ups/userGroup`、`/#/ups/userGroup/list` |
+| 用户画像（CDP） | `/#/ups/personalPortrait` |
+| 用户群画像 | `/#/ups/userportrait`、`/#/ups/userportrait/list` |
+| 用户细查 | `/#/ups/userReview`、`/#/ups/userReview/list` |
 | 自定义 SQL | `/#/tabix/query` |
 | API 密钥 | `/#/apiKey/manage` |
 
 移动端汇总是独立页面，不加载桌面侧栏，可直接在手机浏览器访问。
+CDP 下的 `/list` 路径兼容官方商业版示例的跳转习惯，全部落到本地实现，不跳转
+`pro.clklog.com`。
 
 ## 新增接口约束
 
@@ -225,6 +229,12 @@ docker exec -i clklog-local-mysql \
 cd manage && mvn -q -DskipTests compile
 cd api && mvn -q -DskipTests compile
 cd ui && yarn eslint \
+  src/views/tag-system/index.vue \
+  src/views/tag-system/category.vue \
+  src/views/commercial/CdpList.vue \
+  src/views/commercial/UserReview.vue \
+  src/api/sysmanage/userTag.js \
+  src/router/modules/user-portrait.js \
   src/views/commercial/CustomSqlQuery.vue \
   src/views/commercial/MobileSummary.vue \
   src/views/sys-manage/api-key.vue

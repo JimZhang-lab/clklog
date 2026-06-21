@@ -98,9 +98,14 @@ public class TagCategoryController {
         if (StringUtils.isBlank(id)) {
             return R.fail("缺少分类ID");
         }
+        String projectName = RequestParamUtils.getString(params, "projectName");
+        TblTagCategory category = tagCategoryRepository.findById(id).orElse(null);
+        if (category == null || (StringUtils.isNotBlank(projectName) && !projectName.equals(category.getProjectName()))) {
+            return R.fail("标签分类不存在");
+        }
         boolean hasChildren = false;
         for (TblTagCategory item : tagCategoryRepository.findAll()) {
-            if (id.equals(item.getParentId())) {
+            if (id.equals(item.getParentId()) && StringUtils.equals(category.getProjectName(), item.getProjectName())) {
                 hasChildren = true;
                 break;
             }
@@ -108,10 +113,10 @@ public class TagCategoryController {
         if (hasChildren) {
             return R.fail("请先删除子分类");
         }
-        if (userTagRepository.countByCategoryId(id) > 0) {
+        if (userTagRepository.countByCategoryIdAndProjectName(id, category.getProjectName()) > 0) {
             return R.fail("该分类下仍有用户标签");
         }
-        tagCategoryRepository.deleteById(id);
+        tagCategoryRepository.delete(category);
         return R.ok(true);
     }
 

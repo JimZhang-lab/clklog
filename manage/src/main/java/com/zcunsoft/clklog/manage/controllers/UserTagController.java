@@ -56,7 +56,7 @@ public class UserTagController {
         int pageSize = Math.max(1, RequestParamUtils.getInt(params, "pageSize", 20));
         Page<TblUserTag> page = userTagRepository.findAll(buildSpec(params),
                 PageRequest.of(pageNum - 1, pageSize, Sort.by(Sort.Direction.DESC, "updateTime")));
-        Map<String, String> categoryNames = categoryNameMap();
+        Map<String, String> categoryNames = categoryNameMap(RequestParamUtils.getString(params, "projectName"));
         List<Map<String, Object>> rows = page.getContent().stream()
                 .map(item -> tagView(item, categoryNames))
                 .collect(Collectors.toList());
@@ -67,8 +67,12 @@ public class UserTagController {
     @RequestMapping(path = "/get", method = RequestMethod.POST)
     public R<Map<String, Object>> get(@RequestBody Map<String, Object> params) {
         String id = RequestParamUtils.getString(params, "id");
+        String projectName = RequestParamUtils.getString(params, "projectName");
         TblUserTag tag = StringUtils.isBlank(id) ? null : userTagRepository.findById(id).orElse(null);
-        return tag == null ? R.fail("用户标签不存在") : R.ok(tagView(tag, categoryNameMap()));
+        if (tag == null || (StringUtils.isNotBlank(projectName) && !projectName.equals(tag.getProjectName()))) {
+            return R.fail("用户标签不存在");
+        }
+        return R.ok(tagView(tag, categoryNameMap(tag.getProjectName())));
     }
 
     @Operation(summary = "新增用户标签")
@@ -129,8 +133,13 @@ public class UserTagController {
             ids.add(id);
         }
         for (String tagId : ids) {
-            assignmentRepository.deleteByTagId(tagId);
-            userTagRepository.deleteById(tagId);
+            userTagRepository.findById(tagId)
+                    .filter(tag -> StringUtils.isBlank(RequestParamUtils.getString(params, "projectName"))
+                            || RequestParamUtils.getString(params, "projectName").equals(tag.getProjectName()))
+                    .ifPresent(tag -> {
+                        assignmentRepository.deleteByTagId(tagId);
+                        userTagRepository.delete(tag);
+                    });
         }
         return R.ok(true);
     }
@@ -203,7 +212,7 @@ public class UserTagController {
         userTagRepository.findAllById(assignments.stream()
                 .map(TblUserTagAssignment::getTagId).collect(Collectors.toList()))
                 .forEach(item -> tags.put(item.getId(), item));
-        Map<String, String> categoryNames = categoryNameMap();
+        Map<String, String> categoryNames = categoryNameMap(projectName);
         List<Map<String, Object>> result = new ArrayList<>();
         for (TblUserTagAssignment assignment : assignments) {
             TblUserTag tag = tags.get(assignment.getTagId());
@@ -281,6 +290,18 @@ public class UserTagController {
             if (StringUtils.isNotBlank(createType)) {
                 predicates.add(cb.equal(root.get("createType"), createType));
             }
+            String dataType = RequestParamUtils.getString(params, "dataType");
+            if (StringUtils.isNotBlank(dataType)) {
+                predicates.add(cb.equal(root.get("dataType"), dataType));
+            }
+            String executeStart = RequestParamUtils.getString(params, "lastExecuteStartTime");
+            if (StringUtils.isNotBlank(executeStart)) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("lastExecuteTime"), Timestamp.valueOf(executeStart + " 00:00:00")));
+            }
+            String executeEnd = RequestParamUtils.getString(params, "lastExecuteEndTime");
+            if (StringUtils.isNotBlank(executeEnd)) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("lastExecuteTime"), Timestamp.valueOf(executeEnd + " 23:59:59")));
+            }
             String keyword = RequestParamUtils.getString(params, "keyword");
             if (StringUtils.isNotBlank(keyword)) {
                 String like = "%" + keyword + "%";
@@ -328,9 +349,12 @@ public class UserTagController {
         return item;
     }
 
-    private Map<String, String> categoryNameMap() {
+    private Map<String, String> categoryNameMap(String projectName) {
         Map<String, String> result = new HashMap<>();
         for (TblTagCategory item : tagCategoryRepository.findAll()) {
+            if (StringUtils.isNotBlank(projectName) && !projectName.equals(item.getProjectName())) {
+                continue;
+            }
             result.put(item.getId(), item.getDisplayName());
         }
         return result;

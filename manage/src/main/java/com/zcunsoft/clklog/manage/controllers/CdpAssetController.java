@@ -140,6 +140,28 @@ public class CdpAssetController {
             if (StringUtils.isNotBlank(status)) {
                 predicates.add(builder.equal(root.get("status"), status));
             }
+            String createType = RequestParamUtils.getString(params, "createType");
+            if (StringUtils.isNotBlank(createType)) {
+                predicates.add(builder.equal(root.get("createType"), createType));
+            }
+            String updateMode = RequestParamUtils.getString(params, "updateMode");
+            if (StringUtils.isNotBlank(updateMode)) {
+                predicates.add(builder.equal(root.get("updateMode"), updateMode));
+            }
+            String executeStatus = RequestParamUtils.getString(params, "lastExecuteStatus");
+            if (StringUtils.isNotBlank(executeStatus)) {
+                predicates.add(builder.equal(root.get("lastExecuteStatus"), executeStatus));
+            }
+            String executeStart = RequestParamUtils.getString(params, "lastExecuteStartTime");
+            if (StringUtils.isNotBlank(executeStart)) {
+                predicates.add(builder.greaterThanOrEqualTo(root.get("lastExecuteTime"),
+                        Timestamp.valueOf(executeStart + " 00:00:00")));
+            }
+            String executeEnd = RequestParamUtils.getString(params, "lastExecuteEndTime");
+            if (StringUtils.isNotBlank(executeEnd)) {
+                predicates.add(builder.lessThanOrEqualTo(root.get("lastExecuteTime"),
+                        Timestamp.valueOf(executeEnd + " 23:59:59")));
+            }
             String keyword = RequestParamUtils.getString(params, "keyword");
             if (StringUtils.isNotBlank(keyword)) {
                 String like = "%" + keyword + "%";
@@ -159,11 +181,12 @@ public class CdpAssetController {
         setIfPresent(params, "ruleJson", item::setRuleJson);
         setIfPresent(params, "description", item::setDescription);
         setIfPresent(params, "createUser", item::setCreateUser);
-        List<String> distinctIds = RequestParamUtils.getStringList(params, "distinctIds");
-        if (!distinctIds.isEmpty()) {
+        if (params.containsKey("distinctIds")) {
+            List<String> distinctIds = RequestParamUtils.getStringList(params, "distinctIds");
             item.setDistinctIds(distinctIds.stream().distinct().collect(Collectors.joining(",")));
             item.setMatchUserCount((long) distinctIds.stream().distinct().count());
-        } else if (item.getMatchUserCount() == null) {
+        }
+        if (item.getMatchUserCount() == null) {
             item.setMatchUserCount(0L);
         }
         if (StringUtils.isBlank(item.getStatus())) {
@@ -174,6 +197,9 @@ public class CdpAssetController {
         }
         if (StringUtils.isBlank(item.getUpdateMode())) {
             item.setUpdateMode("manual");
+        }
+        if (StringUtils.isBlank(item.getCreateUser())) {
+            item.setCreateUser("clklog");
         }
         item.setLastExecuteStatus("success");
         item.setLastExecuteTime(now());
@@ -190,11 +216,14 @@ public class CdpAssetController {
         result.put("status", item.getStatus());
         result.put("statusText", "enabled".equalsIgnoreCase(item.getStatus()) ? "启用" : "停用");
         result.put("createType", "custom".equalsIgnoreCase(item.getCreateType()) ? "自定义" : item.getCreateType());
+        result.put("createTypeCode", item.getCreateType());
         result.put("updateMode", "manual".equalsIgnoreCase(item.getUpdateMode()) ? "手动" : item.getUpdateMode());
+        result.put("updateModeCode", item.getUpdateMode());
         result.put("description", item.getDescription());
         result.put("matchUserCount", item.getMatchUserCount());
         result.put("lastExecuteStatus", item.getLastExecuteStatus());
         result.put("lastExecuteTime", item.getLastExecuteTime());
+        result.put("createUser", StringUtils.defaultIfBlank(item.getCreateUser(), "clklog"));
         result.put("createTime", item.getCreateTime());
         result.put("updateTime", item.getUpdateTime());
         result.put("distinctIds", distinctIds(item.getDistinctIds()));

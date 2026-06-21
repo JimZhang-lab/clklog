@@ -13,5 +13,5 @@ public interface UserTagRepository extends PagingAndSortingRepository<TblUserTag
 
     Optional<TblUserTag> findByProjectNameAndTagKey(String projectName, String tagKey);
 
-    long countByCategoryId(String categoryId);
+    long countByCategoryIdAndProjectName(String categoryId, String projectName);
 }
